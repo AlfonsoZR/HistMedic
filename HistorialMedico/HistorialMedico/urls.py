@@ -18,14 +18,32 @@ from django.contrib import admin
 from HMapp import views
 
 
-from HMapp.views import DatosUserListView
+from HMapp.views import DatosUserListView, VisitasListView, AlergiasListView
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    url(r'^crear/visita/', views.Crear_visita, name='VisitasCrear'),
 
     url(r'^$', views.home, name='home'),
 
     url(r'^inicio/$', views.inicio, name='inicio'),
+
     url(r'^InfoPersonal/', views.InfPersonal, name='InfPersonal'),
 
     url(r'^DatosUser/lista$', DatosUserListView.as_view(), name='DatosUser_list'),
+
+    url(r'^Visitas/lista$', VisitasListView.as_view(), name='Visitas_list'),
+
+    url(r'^crear/alergia/', views.Crear_alergia, name='AlergiasCrear'),
+
+    url(r'^Alergias/lista$', AlergiasListView.as_view(), name='Alergias_list'),
+
+
+
+
+
+    # url(r'^crear$', DatosAlergias.as_view(), name='DatosUser_crear'),
+    #
+    # url(r'^visitas$', DatosVisitas.as_view(), name='DatosVisitas_crear'),
+
 ]

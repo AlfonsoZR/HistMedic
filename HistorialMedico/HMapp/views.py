@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from django.conf import settings
 from django.shortcuts import render
-from .forms import RegConsulta, RegPersonal
-from .models import DatosUser
+from .forms import Regvisitas, RegPersonal, RegAlergias
+from .models import DatosUser1, Alergias_Medicamentos, Visitas
 
-from django.views.generic.detail import DetailView
+
+from mimetypes import guess_type
+from wsgiref.util import FileWrapper
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404
+
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
-
 # Create your views here.
 
 def home(request):
@@ -38,22 +41,49 @@ def InfPersonal (request):
         dato2 = form_data.get("edad")
         dato3 = form_data.get("fechaNacimiento")
         dato4 = form_data.get("Tipo_Sangre")
-        dato5 = form.data.get("patologias")
-        dato6 = form_data.get("email")
+        dato5 = form_data.get("email")
 
-        obj = DatosUser.objects.create(nombre=dato, edad=dato2,fechaNacimiento=dato3,
-        Tipo_Sangre=dato4,patologias=dato5, email=dato6)
+        obj = DatosUser1.objects.create(nombre=dato, edad=dato2,fechaNacimiento=dato3,
+        Tipo_Sangre=dato4, email=dato5)
     context ={
     "Info_Personal": form,
     }
 
-    return render(request,"InfPresonal.html", context)
+    return render(request,"InfPersonal.html", context)
 
 
 
+#vista para crear una visita
+def Crear_visita (request):
+    form = Regvisitas(request.POST or None)
+    if form.is_valid():
+        form_data = form.cleaned_data
+        c = form_data.get("doctor")
+        c2 = form_data.get("motivo")
+        c3 = form_data.get("problema")
+        c4 = form_data.get("NotaMedic")
 
+        obj = Visitas.objects.create(doctor=c, motivo=c2, problema=c3, NotaMedic=c4)
+    context ={
+    "crear_visita": form,
+    }
+
+    return render(request,"VisitaCrear.html", context)
+#vista para mirar las visitas que tenemos acumuladas
+class VisitasListView(ListView):
+    model = Visitas
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(VisitasListView, self).get_queryset(**kwargs)
+
+
+        return qs
+
+
+
+#vista basada en clases para aver datos personales.
 class DatosUserListView(ListView):
-    model = DatosUser
+    model = DatosUser1
 
     def get_queryset(self, *args, **kwargs):
         qs = super(DatosUserListView, self).get_queryset(**kwargs)
@@ -67,3 +97,59 @@ class DatosUserListView(ListView):
         #     qs = Libro.objects.filter(qset).distinct()
 
         return qs
+
+#alergias crear
+def Crear_alergia (request):
+    form = RegAlergias(request.POST or None)
+    if form.is_valid():
+        form_data = form.cleaned_data
+        d = form_data.get("medicamento")
+        d2 = form_data.get("motivo")
+        d3 = form_data.get("alergias")
+
+        obj = Alergias_Medicamentos.objects.create(medicamento=d, motivo=d2,alergias=d3,)
+    context ={
+    "crear_alergia": form,
+    }
+
+    return render(request,"AlergiasCrear.html", context)
+#alergias vistas
+class AlergiasListView(ListView):
+    model = Alergias_Medicamentos
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(AlergiasListView, self).get_queryset(**kwargs)
+
+        # busca = self.request.GET.get("q")
+        # if busca:
+        #     qset = (
+        #         Q(nombre__icontains=busca) |
+        #         Q(autor__icontains=busca)
+        #     )
+        #     qs = Libro.objects.filter(qset).distinct()
+
+        return qs
+
+
+
+# class DatosAlergias(CreateView):
+#     model = Alergias_Medicamentos
+# #   template_name = "form.html"
+#     form_class = RegAlergias
+#     #success_url = "/producto/crear/"
+#
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(DatosAlergias, self).get_context_data(*args, **kwargs)
+#         context["submit_btn"]="Guardar"
+#         return context
+#
+# class DatosVisitas(CreateView):
+#     model = Visitas
+# #   template_name = "form.html"
+#     form_class = Regvisitas
+#     #success_url = "/producto/crear/"
+#
+#     def get_context_data(self, *args, **kwargs):
+#         context = super(DatosVisitas, self).get_context_data(*args, **kwargs)
+#         context["submit_btn"]="Guardar"
+#         return context
