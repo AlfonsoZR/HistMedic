@@ -17,19 +17,20 @@ Tipo_Sangre = (
 )
 
 
-class DatosUser1(models.Model):
+class Pacientes(models.Model):
     nombre = models.CharField(max_length = 30)
     edad = models.DecimalField(max_digits=100, decimal_places=2)
     fechaNacimiento = models.CharField(max_length=50)
     Tipo_Sangre = models.CharField(max_length=11,choices=Tipo_Sangre)
+    Alergias = models.CharField(max_length=100)
     email = models.EmailField()
 
 
     def __unicode__(self):
       return self.nombre
 
-class Visitas(models.Model):
-    doctor = models.CharField(max_length=100)
+class Consultas(models.Model):
+    paciente = models.CharField(max_length=100)
     motivo = models.CharField(max_length=100)
     problema = models.CharField(max_length=500)
     NotaMedic = models.CharField(max_length=500)

@@ -16,13 +16,19 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from HMapp import views
-
-
+from django.conf.urls import url, include
+from contacto.views import UserRegisterView
 from HMapp.views import DatosUserListView, VisitasListView, AlergiasListView
 urlpatterns = [
+
+
+url(r'^usuario', views.useropc, name='usuarioopc'),
+    url('^', include('django.contrib.auth.urls')),
+    url(r'^register/$', UserRegisterView.as_view(), name='Registro'),
+
     url(r'^admin/', admin.site.urls),
 
-    url(r'^crear/visita/', views.Crear_visita, name='VisitasCrear'),
+    url(r'^crear/visita/', views.Crear_consulta, name='VisitasCrear'),
 
     url(r'^$', views.home, name='home'),
 

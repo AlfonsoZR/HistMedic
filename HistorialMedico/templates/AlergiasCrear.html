@@ -5,11 +5,15 @@
 <br>
 <br>
 <br>
-    <h1>Ingresa Datos Medicos de alergias</h1>
-    <form method="post" action="">{% csrf_token %}
-      {{ crear_alergia.as_p}}
-      <input type="submit"  value="Guardar"/>
-    </form>
+
+<div class="col-md-4 col-md-offset-4">
+  <h1>Ingresa Datos Medicos de alergias</h1>
+  <form method="post" action="">{% csrf_token %}
+    {{ crear_alergia.as_p}}
+    <input type="submit"  value="Guardar"/>
+  </form>
+
+</div>
 
 
 

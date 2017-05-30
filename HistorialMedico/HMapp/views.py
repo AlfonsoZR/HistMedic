@@ -2,10 +2,10 @@
 from __future__ import unicode_literals
 from django.conf import settings
 from django.shortcuts import render
-from .forms import Regvisitas, RegPersonal, RegAlergias
-from .models import DatosUser1, Alergias_Medicamentos, Visitas
+from .forms import RegConsulta, RegPacientes, RegAlergias
+from .models import Pacientes, Alergias_Medicamentos, Consultas
 
-
+from django.db.models import Q
 from mimetypes import guess_type
 from wsgiref.util import FileWrapper
 from django.http import Http404, HttpResponse
@@ -34,17 +34,18 @@ def inicio (request):
     return render(request, "inicio.html", context)
 
 def InfPersonal (request):
-    form = RegPersonal(request.POST or None)
+    form = RegPacientes(request.POST or None)
     if form.is_valid():
         form_data = form.cleaned_data
         dato = form_data.get("nombre")
         dato2 = form_data.get("edad")
         dato3 = form_data.get("fechaNacimiento")
         dato4 = form_data.get("Tipo_Sangre")
-        dato5 = form_data.get("email")
+        dato5 = form_data.get("Alergias")
+        dato6 = form_data.get("email")
 
-        obj = DatosUser1.objects.create(nombre=dato, edad=dato2,fechaNacimiento=dato3,
-        Tipo_Sangre=dato4, email=dato5)
+        obj = Pacientes.objects.create(nombre=dato, edad=dato2,fechaNacimiento=dato3,
+        Tipo_Sangre=dato4,Alergias=dato5, email=dato6)
     context ={
     "Info_Personal": form,
     }
@@ -54,16 +55,16 @@ def InfPersonal (request):
 
 
 #vista para crear una visita
-def Crear_visita (request):
-    form = Regvisitas(request.POST or None)
+def Crear_consulta (request):
+    form = RegConsulta(request.POST or None)
     if form.is_valid():
         form_data = form.cleaned_data
-        c = form_data.get("doctor")
+        c = form_data.get("paciente")
         c2 = form_data.get("motivo")
         c3 = form_data.get("problema")
         c4 = form_data.get("NotaMedic")
 
-        obj = Visitas.objects.create(doctor=c, motivo=c2, problema=c3, NotaMedic=c4)
+        obj = Consultas.objects.create(paciente=c, motivo=c2, problema=c3, NotaMedic=c4)
     context ={
     "crear_visita": form,
     }
@@ -71,11 +72,18 @@ def Crear_visita (request):
     return render(request,"VisitaCrear.html", context)
 #vista para mirar las visitas que tenemos acumuladas
 class VisitasListView(ListView):
-    model = Visitas
+    model = Consultas
 
     def get_queryset(self, *args, **kwargs):
         qs = super(VisitasListView, self).get_queryset(**kwargs)
 
+        busca = self.request.GET.get("q")
+        if busca:
+            qset = (
+                Q(paciente__icontains=busca)
+
+            )
+            qs = Consultas.objects.filter(qset).distinct()
 
         return qs
 
@@ -83,18 +91,18 @@ class VisitasListView(ListView):
 
 #vista basada en clases para aver datos personales.
 class DatosUserListView(ListView):
-    model = DatosUser1
+    model = Pacientes
 
     def get_queryset(self, *args, **kwargs):
         qs = super(DatosUserListView, self).get_queryset(**kwargs)
 
-        # busca = self.request.GET.get("q")
-        # if busca:
-        #     qset = (
-        #         Q(nombre__icontains=busca) |
-        #         Q(autor__icontains=busca)
-        #     )
-        #     qs = Libro.objects.filter(qset).distinct()
+        busca = self.request.GET.get("q")
+        if busca:
+            qset = (
+                Q(nombre__icontains=busca)
+
+            )
+            qs = Pacientes.objects.filter(qset).distinct()
 
         return qs
 
@@ -131,7 +139,8 @@ class AlergiasListView(ListView):
         return qs
 
 
-
+def useropc (request):
+    return render(request, "usuarioopc.html")
 # class DatosAlergias(CreateView):
 #     model = Alergias_Medicamentos
 # #   template_name = "form.html"

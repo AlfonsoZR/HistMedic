@@ -7,6 +7,10 @@
     <li role="presentation"><a href="/InfoPersonal/">Agregar Paciente</a></li>
     <li role="presentation"class="active"><a href="/DatosUser/lista">Lista de paciente</a></li>
   </ul>
+  <form class="navbar-form navbar-right">
+              <input type="text" class="form-control" placeholder="Search..." name="q" value="{{busca|escape}}">
+            </form>
+
   <h1>Datos Personales Basicos.</h1>
   <table class="table table-striped">
 <thead>
@@ -15,20 +19,22 @@
     <th>Edad</th>
     <th>Fecha de Nacimiento</th>
     <th>Tipo de Sangre</th>
+    <th>Alergias</th>
     <th>Email</th>
   </tr>
 </thead>
 <tbody>
   <ul>
-    {%for DatosUser1 in object_list%}
+    {%for Pacientes in object_list%}
 
     <tr>
 
-      <th><a href="#">{{DatosUser1.nombre}}</a></th>
-      <th><a href="#">{{DatosUser1.edad}}</a></th>
-      <th><a href="#">{{DatosUser1.fechaNacimiento}}</a></th>
-      <th><a href="#">{{DatosUser1.Tipo_Sangre}}</a></th>
-      <th><a href="#">{{DatosUser1.email}}</a></th>
+      <th><a href="#">{{Pacientes.nombre}}</a></th>
+      <th><a href="#">{{Pacientes.edad}}</a></th>
+      <th><a href="#">{{Pacientes.fechaNacimiento}}</a></th>
+      <th><a href="#">{{Pacientes.Tipo_Sangre}}</a></th>
+      <th><a href="#">{{Pacientes.Alergias}}</a></th>
+      <th><a href="#">{{Pacientes.email}}</a></th>
 
 
     </tr>
